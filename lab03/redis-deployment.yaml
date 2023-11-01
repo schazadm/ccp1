@@ -1,0 +1,44 @@
+# APIVersion defines the versioned schema of this representation of an object
+apiVersion: apps/v1
+# Kind is a string value representing the REST resource this object represents
+kind: Deployment
+# Standard object's metadata
+# https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
+metadata:
+  # Some name
+  name: redis-deployment
+  labels:
+    component: redis
+# Specification of the desired behavior of the Deployment
+spec:
+  # Number of desired pods. Default is 1
+  replicas: 1
+  # Label selector for pods. Existing ReplicaSets whose pods are selected by this will be the ones affected by this deployment. It must match the pod template's labels.
+  selector:
+    # matchLabels is a map of {key,value} pairs
+    matchLabels:
+      component: redis
+      app: todo
+  # Template describes the pods that will be created
+  template:
+    metadata:
+      name: redis
+      labels:
+        component: redis
+        app: todo
+    # This is a standard POD spec
+    # See POD.yaml line 27
+    spec:
+      # List of containers belonging to the pod
+      containers:
+        - name: redis
+          image: redis:3.2.10-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: 100m
+          args:
+            - redis-server
+            - --requirepass ccp2
+            - --appendonly yes
